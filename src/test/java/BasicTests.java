@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import pageObjects.MainPage;
 import pageObjects.ShortsPage;
 
@@ -9,6 +11,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @ExtendWith(BasicFixture.class)
 class BasicTests extends BasicFixture {
 
+    @Execution(ExecutionMode.CONCURRENT)
     @Test
     void shouldNavigateToSearchResultsWhenSearchMovieName() {
         //Arrange
@@ -22,6 +25,7 @@ class BasicTests extends BasicFixture {
         Assertions.assertEquals("https://www.youtube.com/results?search_query=Szachowy+Mentor", driver.getCurrentUrl());
     }
 
+    @Execution(ExecutionMode.CONCURRENT)
     @Test
     void shouldNavigateToShortsPageWhenClickShortsButton() {
         //Arrange
@@ -36,6 +40,7 @@ class BasicTests extends BasicFixture {
         assertThat(driver.getCurrentUrl()).contains("https://www.youtube.com/shorts");
     }
 
+    @Execution(ExecutionMode.CONCURRENT)
     @Test
     void shouldFailToTakeScreenShot() {
         throw new RuntimeException("Fail Test");

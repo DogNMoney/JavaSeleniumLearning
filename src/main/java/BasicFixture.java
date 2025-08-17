@@ -1,12 +1,13 @@
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pageObjects.CookiesDisposalPage;
 
@@ -20,8 +21,8 @@ public class BasicFixture implements TestWatcher {
     static WebDriver driver;
     static WebDriverWait wait;
 
-    @BeforeAll
-    static void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         driver = new WebDriverFactory().createWebDriver();
 
         wait = new WebDriverWait(driver, Duration.ofSeconds(5));
@@ -29,10 +30,9 @@ public class BasicFixture implements TestWatcher {
         declineCookies();
     }
 
-    @AfterAll
-    static void tearDown() {
-        driver.close();
-        driver.quit();
+    @AfterEach
+    void tearDown() {
+        WebDriverFactory.removeDriver();
     }
 
     @Override
