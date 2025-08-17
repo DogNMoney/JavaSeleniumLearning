@@ -9,21 +9,35 @@ import java.nio.file.Paths;
 
 public class WebDriverFactory {
 
+    static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+    public static WebDriver getDriver() {
+        return driver.get();
+    }
+
     public WebDriver createWebDriver() throws Exception {
         TestConfig testConfig = readTestConfig();
-        WebDriver driver;
+        WebDriver webDriver;
 
         switch (testConfig.getBrowser()) {
             case "chrome":
                 System.setProperty("webdriver.chrome.driver", "D:\\Work\\repos\\SeleniumJava\\chromedriver-win64\\chromedriver.exe");
                 ChromeOptions options = createChromeOptions(testConfig);
-                driver = new ChromeDriver(options);
+                webDriver = new ChromeDriver(options);
                 break;
             default:
                 throw new Exception("Browser " + testConfig.getBrowser() + " not suppoerted");
         }
 
-        return driver;
+        driver.set(webDriver);
+        return getDriver();
+    }
+
+    public static void removeDriver() {
+        if (driver.get() != null) {
+            driver.get().quit();
+            driver.remove();
+        }
     }
 
     private ChromeOptions createChromeOptions(TestConfig testConfig) {
