@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pageObjects.CookiesDisposalPage;
@@ -16,14 +17,12 @@ import java.time.Duration;
 
 public class BasicFixture implements TestWatcher {
 
-    static ChromeDriver driver;
+    static WebDriver driver;
     static WebDriverWait wait;
 
     @BeforeAll
-    static void setUp() {
-        System.setProperty("webdriver.chrome.driver", "D:\\Work\\repos\\SeleniumJava\\chromedriver-win64\\chromedriver.exe");
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
+    static void setUp() throws Exception {
+        driver = new WebDriverFactory().createWebDriver();
 
         wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 

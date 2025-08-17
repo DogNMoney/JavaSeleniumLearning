@@ -1,0 +1,5 @@
+{
+  "browser": "chrome",
+  "fullScreen": true,
+  "headless": false
+}
