@@ -1,5 +1,6 @@
 {
   "browser": "chrome",
+  "mobile": false,
   "fullScreen": true,
   "headless": false
 }
