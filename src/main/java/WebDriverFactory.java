@@ -6,6 +6,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WebDriverFactory {
 
@@ -15,8 +17,7 @@ public class WebDriverFactory {
         return driver.get();
     }
 
-    public WebDriver createWebDriver() throws Exception {
-        TestConfig testConfig = readTestConfig();
+    public WebDriver createWebDriver(TestConfig testConfig) throws Exception {
         WebDriver webDriver;
 
         switch (testConfig.getBrowser()) {
@@ -48,15 +49,12 @@ public class WebDriverFactory {
         if (testConfig.isFullScreen()){
             options.addArguments("--start-maximized");
         }
+        if (testConfig.isMobile()){
+            Map<String, String> mobileEmulation = new HashMap<>();
+            mobileEmulation.put("deviceName", "iPhone X");
+            options.setExperimentalOption("mobileEmulation", mobileEmulation);
+        }
 
         return  options;
-    }
-
-    public TestConfig readTestConfig() throws IOException {
-        File file = new File(Paths.get("").toAbsolutePath().toString() + "/src/test/resources/configuration.json");
-        System.out.println("Reading test config file: " + file.getAbsolutePath());
-        ObjectMapper mapper = new ObjectMapper();
-
-        return mapper.readValue(file, TestConfig.class);
     }
 }

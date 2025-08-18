@@ -14,9 +14,17 @@ public class MainPage extends Page {
     }
 
     By searchBoxLocator = new By.ByClassName("yt-searchbox-input");
+    By searchBoxButtonLocator = new By.ByClassName("search-bar-entry-point-primary-button");
     By shortsButtonLocator = new By.ByXPath("//tp-yt-paper-item[contains(., 'Shorts')]");
 
-    public MainPage searchMovie(String movieName) {
+    //search-bar-entry-point-button
+
+    public MainPage searchMovie(String movieName, boolean isMobileView) {
+        if (isMobileView) {
+            WebElement searchInputButton = wait.until(ExpectedConditions.elementToBeClickable(searchBoxButtonLocator));
+            searchInputButton.click();
+        }
+
         WebElement searchInput = wait.until(ExpectedConditions.presenceOfElementLocated(searchBoxLocator));
 
         searchInput.clear();

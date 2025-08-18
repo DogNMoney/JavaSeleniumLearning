@@ -1,8 +1,6 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 import org.openqa.selenium.OutputType;
@@ -20,24 +18,23 @@ public class BasicFixture implements TestWatcher {
 
     static WebDriver driver;
     static WebDriverWait wait;
+    static TestConfig testConfig;
 
     @BeforeEach
     void setUp() throws Exception {
-        driver = new WebDriverFactory().createWebDriver();
+        testConfig = readTestConfig();
+        driver = new WebDriverFactory().createWebDriver(testConfig);
 
         wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         declineCookies();
     }
 
-    @AfterEach
-    void tearDown() {
-        WebDriverFactory.removeDriver();
-    }
-
     @Override
     public void testSuccessful(ExtensionContext context) {
         System.out.println("✅ Test passed: " + context.getDisplayName());
+
+        WebDriverFactory.removeDriver();
     }
 
     @Override
@@ -49,6 +46,8 @@ public class BasicFixture implements TestWatcher {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        WebDriverFactory.removeDriver();
     }
 
     private static void declineCookies(){
@@ -58,9 +57,19 @@ public class BasicFixture implements TestWatcher {
         cookiesDisposalPage.clickDeclineCookiesButton();
     }
 
+    public TestConfig readTestConfig() throws IOException {
+        File file = new File(Paths.get("").toAbsolutePath().toString() + "/src/test/resources/configuration.json");
+        System.out.println("Reading test config file: " + file.getAbsolutePath());
+        ObjectMapper mapper = new ObjectMapper();
+
+        return mapper.readValue(file, TestConfig.class);
+    }
+
     private static void takeScreenshot(String screenShotName) throws IOException {
         TakesScreenshot screenshot = (TakesScreenshot) driver;
         File screenShotFile = screenshot.getScreenshotAs(OutputType.FILE);
+
+        String foo = Paths.get("").toAbsolutePath().toString() + "/Screenshots/" + screenShotName + ".jpg";
         
         FileUtils.copyFile(screenShotFile, new File(Paths.get("").toAbsolutePath().toString() + "/Screenshots/" + screenShotName + ".jpg"));
     }

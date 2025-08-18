@@ -19,10 +19,14 @@ class BasicTests extends BasicFixture {
 
         //Act
         driver.get("https://www.youtube.com/");
-        mainPage.searchMovie("Szachowy Mentor");
+        mainPage.searchMovie("Szachowy Mentor", testConfig.isMobile());
 
         //Assert
-        Assertions.assertEquals("https://www.youtube.com/results?search_query=Szachowy+Mentor", driver.getCurrentUrl());
+        if (testConfig.isMobile()) {
+            Assertions.assertEquals("https://m.youtube.com/results?sp=mAEA&search_query=Szachowy+Mentor", driver.getCurrentUrl());
+        }else {
+            Assertions.assertEquals("https://www.youtube.com/results?search_query=Szachowy+Mentor", driver.getCurrentUrl());
+        }
     }
 
     @Execution(ExecutionMode.CONCURRENT)
