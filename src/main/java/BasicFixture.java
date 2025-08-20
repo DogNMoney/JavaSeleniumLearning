@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class BasicFixture implements TestWatcher {
 
@@ -30,23 +32,44 @@ public class BasicFixture implements TestWatcher {
         declineCookies();
     }
 
+    @AfterAll
+    static void tearDown() throws IOException {
+        TestReportManager testReportManager = TestReportManager.getInstance();
+        TestReportManager.ReportSummary summary = new TestReportManager.ReportSummary(
+                testReportManager.testsPassedCount.get(),
+                testReportManager.testsFailedCount.get(),
+                testReportManager.failedTests
+        );
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writerWithDefaultPrettyPrinter()
+                .writeValue(new File(Paths.get("").toAbsolutePath() + "/TestReports/TestReport" + LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")) + ".json"), summary);
+    }
+
     @Override
     public void testSuccessful(ExtensionContext context) {
         System.out.println("✅ Test passed: " + context.getDisplayName());
+
+        TestReportManager.getInstance().testsPassedCount.incrementAndGet();
 
         WebDriverFactory.removeDriver();
     }
 
     @Override
     public void testFailed(ExtensionContext context, Throwable cause){
+        String screenShotFilePath;
+        TestReportManager testReportManager = TestReportManager.getInstance();
         System.out.println("❌ Test failed: " + context.getDisplayName());
 
+        testReportManager.testsFailedCount.incrementAndGet();
+
         try {
-            takeScreenshot(context.getDisplayName());
+            screenShotFilePath = takeScreenshot(context.getDisplayName());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+        TestReportManager.getInstance().failedTests.add(new TestReportManager.FailedTest(context.getDisplayName(), screenShotFilePath));
         WebDriverFactory.removeDriver();
     }
 
@@ -58,19 +81,20 @@ public class BasicFixture implements TestWatcher {
     }
 
     public TestConfig readTestConfig() throws IOException {
-        File file = new File(Paths.get("").toAbsolutePath().toString() + "/src/test/resources/configuration.json");
+        File file = new File(Paths.get("").toAbsolutePath() + "/src/test/resources/configuration.json");
         System.out.println("Reading test config file: " + file.getAbsolutePath());
         ObjectMapper mapper = new ObjectMapper();
 
         return mapper.readValue(file, TestConfig.class);
     }
 
-    private static void takeScreenshot(String screenShotName) throws IOException {
+    private static String takeScreenshot(String screenShotName) throws IOException {
         TakesScreenshot screenshot = (TakesScreenshot) driver;
         File screenShotFile = screenshot.getScreenshotAs(OutputType.FILE);
-
-        String foo = Paths.get("").toAbsolutePath().toString() + "/Screenshots/" + screenShotName + ".jpg";
+        File screenShotFilePath = new File(Paths.get("").toAbsolutePath() + "/Screenshots/" + screenShotName + ".jpg");
         
-        FileUtils.copyFile(screenShotFile, new File(Paths.get("").toAbsolutePath().toString() + "/Screenshots/" + screenShotName + ".jpg"));
+        FileUtils.copyFile(screenShotFile, screenShotFilePath);
+
+        return screenShotFilePath.getAbsolutePath();
     }
 }

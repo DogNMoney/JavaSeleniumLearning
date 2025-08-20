@@ -1,0 +1,8 @@
+{
+  "passedCount" : 2,
+  "failedCount" : 1,
+  "failedTests" : [ {
+    "testName" : "shouldFailToTakeScreenShot()",
+    "screenShotPath" : "D:\\Work\\repos\\SeleniumJava\\Screenshots\\shouldFailToTakeScreenShot().jpg"
+  } ]
+}
