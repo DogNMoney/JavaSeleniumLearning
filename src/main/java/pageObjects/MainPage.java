@@ -7,6 +7,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
+
 public class MainPage extends Page {
 
     public MainPage(WebDriver driver, WebDriverWait wait) {
@@ -16,6 +18,7 @@ public class MainPage extends Page {
     By searchBoxLocator = new By.ByClassName("yt-searchbox-input");
     By searchBoxButtonLocator = new By.ByClassName("search-bar-entry-point-primary-button");
     By shortsButtonLocator = new By.ByXPath("//tp-yt-paper-item[contains(., 'Shorts')]");
+    By redirectButtonLocator = new By.ByClassName("yt-simple-endpoint");
 
     //search-bar-entry-point-button
 
@@ -40,5 +43,17 @@ public class MainPage extends Page {
         shortsButton.click();
 
         return new ShortsPage(driver, wait);
+    }
+
+    public MainPage clickRedirectButtonByText(String text){
+        WebElement redirectButton = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(redirectButtonLocator))
+                .stream()
+                .filter(webElement -> webElement.getText().equals(text))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Element with text '" + text + "' not found"));
+
+        redirectButton.click();
+
+        return this;
     }
 }

@@ -46,6 +46,22 @@ class BasicTests extends BasicFixture {
 
     @Execution(ExecutionMode.CONCURRENT)
     @Test
+    void shouldNavigateToShortsPageWhenClickShortsButtonFoundElementByText() {
+        //Arrange
+        MainPage mainPage = new MainPage(driver, wait);
+
+        //Act
+        driver.get("https://www.youtube.com/");
+        mainPage.clickRedirectButtonByText("Shorts");
+        ShortsPage shortsPage = new ShortsPage(driver, wait);
+
+        //Assert
+        assertThat(shortsPage.isShortsPlayerDisplayed()).isTrue();
+        assertThat(driver.getCurrentUrl()).contains("https://www.youtube.com/shorts");
+    }
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @Test
     void shouldFailToTakeScreenShot() {
         throw new RuntimeException("Fail Test");
     }
