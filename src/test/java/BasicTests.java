@@ -62,6 +62,21 @@ class BasicTests extends BasicFixture {
 
     @Execution(ExecutionMode.CONCURRENT)
     @Test
+    void shouldNavigateToAnotherPageInTab() {
+        //Arrange
+        String url = "https://www.chess.com/";
+        MainPage mainPage = new MainPage(driver, wait);
+
+        //Act
+        driver.get("https://www.youtube.com/");
+        WebDriverTabsHandler.OpenNewTabAndSwitch(driver, url);
+
+        //Assert
+        assertThat(driver.getCurrentUrl()).contains("https://www.chess.com");
+    }
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @Test
     void shouldFailToTakeScreenShot() {
         throw new RuntimeException("Fail Test");
     }
