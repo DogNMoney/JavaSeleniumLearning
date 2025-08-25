@@ -8,6 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class MainPage extends Page {
 
@@ -50,7 +51,7 @@ public class MainPage extends Page {
                 .stream()
                 .filter(webElement -> webElement.getText().equals(text))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Element with text '" + text + "' not found"));
+                .orElseThrow(() -> new NoSuchElementException("Element with text '" + text + "' not found"));
 
         redirectButton.click();
 

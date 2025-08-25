@@ -1,11 +1,8 @@
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,9 +17,9 @@ public class WebDriverFactory {
     public WebDriver createWebDriver(TestConfig testConfig) throws Exception {
         WebDriver webDriver;
 
-        switch (testConfig.getBrowser()) {
+        switch (TestProperties.getProperty("browser")) {
             case "chrome":
-                System.setProperty("webdriver.chrome.driver", "D:\\Work\\repos\\SeleniumJava\\chromedriver-win64\\chromedriver.exe");
+                WebDriverManager.chromedriver().setup();
                 ChromeOptions options = createChromeOptions(testConfig);
                 webDriver = new ChromeDriver(options);
                 break;
@@ -43,13 +40,13 @@ public class WebDriverFactory {
 
     private ChromeOptions createChromeOptions(TestConfig testConfig) {
         ChromeOptions options = new ChromeOptions();
-        if (testConfig.isHeadless()){
+        if (Boolean.parseBoolean(TestProperties.getProperty("headless"))){
             options.addArguments("--headless");
         }
-        if (testConfig.isFullScreen()){
+        if (Boolean.parseBoolean(TestProperties.getProperty("fullScreen"))){
             options.addArguments("--start-maximized");
         }
-        if (testConfig.isMobile()){
+        if (Boolean.parseBoolean(TestProperties.getProperty("mobile"))){
             Map<String, String> mobileEmulation = new HashMap<>();
             mobileEmulation.put("deviceName", "iPhone X");
             options.setExperimentalOption("mobileEmulation", mobileEmulation);
