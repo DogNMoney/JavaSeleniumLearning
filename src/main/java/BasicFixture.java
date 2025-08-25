@@ -18,16 +18,16 @@ import java.time.format.DateTimeFormatter;
 
 public class BasicFixture implements TestWatcher {
 
-    static WebDriver driver;
-    static WebDriverWait wait;
-    static TestConfig testConfig;
+    protected WebDriver driver;
+    protected WebDriverWait wait;
+    protected TestConfig testConfig;
 
     @BeforeEach
     void setUp() throws Exception {
-        testConfig = readTestConfig();
-        driver = new WebDriverFactory().createWebDriver(testConfig);
+        this.testConfig = readTestConfig();
+        this.driver = new WebDriverFactory().createWebDriver(testConfig);
 
-        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
         declineCookies();
     }
@@ -73,8 +73,8 @@ public class BasicFixture implements TestWatcher {
         WebDriverFactory.removeDriver();
     }
 
-    private static void declineCookies(){
-        driver.get("https://www.youtube.com/");
+    private void declineCookies(){
+        this.driver.get("https://www.youtube.com/");
 
         CookiesDisposalPage cookiesDisposalPage = new CookiesDisposalPage(driver, wait);
         cookiesDisposalPage.clickDeclineCookiesButton();
@@ -88,8 +88,8 @@ public class BasicFixture implements TestWatcher {
         return mapper.readValue(file, TestConfig.class);
     }
 
-    private static String takeScreenshot(String screenShotName) throws IOException {
-        TakesScreenshot screenshot = (TakesScreenshot) driver;
+    private String takeScreenshot(String screenShotName) throws IOException {
+        TakesScreenshot screenshot = (TakesScreenshot) this.driver;
         File screenShotFile = screenshot.getScreenshotAs(OutputType.FILE);
         File screenShotFilePath = new File(Paths.get("").toAbsolutePath() + "/Screenshots/" + screenShotName + ".jpg");
         
